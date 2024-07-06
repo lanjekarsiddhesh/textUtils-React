@@ -14,7 +14,7 @@ import {
 
 
 function App() {
-  const [mode, setMode] = useState('light');
+  const [mode, setMode] = useState('dark');
   const changeMode = ()=>{
     if(mode === 'dark'){
       setMode('light')
