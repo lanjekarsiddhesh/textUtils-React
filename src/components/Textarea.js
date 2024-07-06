@@ -1,10 +1,13 @@
 import React, { useState } from 'react'
 
 export default function Textarea(prop) {
+
+  const [text, setText] = useState('Enter here your text for analyzing...')
+  const [num, setnum] = useState(24)
+
   const changeHandlar = (event)=>{
     setText(event.target.value)
   }
-  
   
   const NumchangeHandlar = (event)=>{
     let TextArea = document.getElementById("ControlTextarea")
@@ -23,7 +26,15 @@ export default function Textarea(prop) {
   }
 
   const handdleCapitalize = ()=>{
-    console.log("test")
+    
+    const sentences = text.split('. '); // Split the input into individual sentences
+    const capitalizedSentences = sentences.map(sentence => {
+      return sentence.charAt(0).toUpperCase() + sentence.slice(1);
+    });
+    
+    const outputSentence = capitalizedSentences.join('. ');
+    setText(outputSentence)
+
   }
 
   const handdleItalic = ()=>{
@@ -61,22 +72,19 @@ export default function Textarea(prop) {
 
   const counterText = ()=>{
     let Wordcount = 0
-    if(text.split(" ").join("").length > 0){
-      Wordcount = text.trim().split(" ").length;
-    }
+    Wordcount = text.split(" ").filter((element)=>{return element.length!==0}).length
     return Wordcount
+  }
+
+  const handleCopy = ()=>{
+    navigator.clipboard.writeText(text)
+    alert("Text Copied")
   }
 
   const ClearText = ()=>{
     setText('')
   }
 
-  
-
-  const [text, setText] = useState('Enter here your text for analyzing...')
-  const [num, setnum] = useState(24)
-
-  // const [tableData, NewtableData] = useState("")
   const Textlist = text.split(" ")
   const commanWord = new Set()
   const count = {};
@@ -89,59 +97,32 @@ export default function Textarea(prop) {
       commanWord.add(element)
     }
   });
-
-  for(let word of commanWord){
-    const count = Textlist.filter(wordCount => wordCount === word).length;
-    console.log(count); // 3
-  }
-  console.log(commanWord.size)
   
-
   return (
     <>
     <div>
         <div style={{color: prop.mode==='dark'?'white':'black'}} className="mb-3">
         <h1>{prop.heading}</h1>
         <span>Font size: </span><input type='number' id="FontSize"  value={num} onInput={NumchangeHandlar} />
-        <p id="Text_count">{counterText()} words and {text.length} Characters and {text.split(". ").length} Sentancees</p>
+        <p id="Text_count">{counterText()} words and {text.length} Characters and {text.split(". ").filter((element)=>{return element.length!==0}).length} Sentancees</p>
         <textarea className="form-control" value={text} id="ControlTextarea" rows="8" onChange={changeHandlar} ></textarea>
         </div>
 
-        <button type="button" className="btn btn-secondary m-2" onClick={handdleUpperCase} >UPPER CASE</button>
-        <button type="button" className="btn btn-secondary m-2" onClick={handdleLowerCase} >lower case</button>
-        <button type="button" className="btn btn-secondary m-2 disabled" onClick={handdleCapitalize} >Capitalize</button>
-        <button type="button" className="btn btn-secondary m-2 italic" onClick={handdleItalic} >italic</button>
-        <button type="button" className="btn btn-secondary m-2 bold" onClick={handdleBold} >Bold</button>
-        <button type="button" className="btn btn-secondary m-2" onClick={handleExtraSpace} >Remove spaces</button>
-        <button type="button" className="btn btn-secondary m-2 disabled">Translate</button>
-        <button type="button" className="btn btn-secondary m-2" onClick={TexttoSpeech} >Text to Speech</button>
+        <button type="button" className={`btn btn-secondary m-2 ${counterText()!==0?'enable':'disabled'}`} onClick={handdleUpperCase} >UPPER CASE</button>
+        <button type="button" className={`btn btn-secondary m-2 ${counterText()!==0?'enable':'disabled'}`} onClick={handdleLowerCase} >lower case</button>
+        <button type="button" className={`btn btn-secondary m-2 ${counterText()!==0?'enable':'disabled'}`} onClick={handdleCapitalize} >Capitalize</button>
+        <button type="button" className={`btn btn-secondary m-2 italic ${counterText()!==0?'enable':'disabled'}`} onClick={handdleItalic} >italic</button>
+        <button type="button" className={`btn btn-secondary m-2 bold ${counterText()!==0?'enable':'disabled'}`} onClick={handdleBold} >Bold</button>
+        <button type="button" className={`btn btn-secondary m-2 ${counterText()!==0?'enable':'disabled'}`} onClick={handleExtraSpace} >Remove spaces</button>
+        <button type="button" className={`btn btn-secondary m-2 ${counterText()!==0?'enable':'disabled'}`} onClick={handleCopy} >Copy</button>
+        <button type="button" className={`btn btn-secondary m-2 ${counterText()!==0?'enable':'disabled'}`} onClick={TexttoSpeech} >Text to Speech</button>
         <button type="button" className="btn btn-danger m-2 clear-btn" onClick={ClearText} >Clear</button>
-        
       
     </div>
     <div style={{color: prop.mode==='dark'?'white':'black'}} className="container mt-4">
-      <h3>Analyzing...</h3>
-      <h6>Total common words ({commanWord.size})</h6>
-      <table style={{color: prop.mode==='dark'?'white':'black'}} className="table">
-        <thead>
-          <tr>
-            <th scope="col">Word</th>
-            <th scope="col">Count</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-          <td id='word'>Mark</td>
-          <td id="count">1</td>
-          </tr>
-
-          <tr>
-          <td id='word'>Mark</td>
-          <td id="count">1</td>
-          </tr>
-          
-        </tbody>
-      </table>
+      {/* <h3>Analyzing...</h3> */}
+      <h4>Total common words ({commanWord.size})</h4>
+    
     </div>
     </>
   )
