@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  # Unique key of the Deployment instance
+  name: textutil-react
+spec:
+  # 3 Pods should exist at all times.
+  replicas: 3
+  selector:
+    matchLabels:
+      app: textutil
+  template:
+    metadata:
+      labels:
+        # Apply this label to pods and default
+        # the Deployment label selector to this value
+        app: textutil
+    spec:
+      containers:
+      - name: textutil
+        # Run this image
+        image: lanjekarsiddhesh/text-util:latest
